@@ -50,7 +50,8 @@ void sequence_gpu(int *d_ptr, int length, const sycl::nd_item<3> &item_ct1)
     {
         unsigned int laneid;
         //This command gets the lane ID within the current warp
-        laneid = item_ct1.get_sub_group().get_local_linear_id();
+        //laneid = item_ct1.get_sub_group().get_local_linear_id();
+        laneid = item_ct1.get_local_linear_id() % 32;
         d_ptr[elemID] = laneid;
     }
 }
@@ -110,9 +111,8 @@ int main(int argc, char **argv)
 
     bool bValid = true;
 
-    for (int i=0; i<N ; i++)
+    for (int i=0; i<N && bValid; i++)
     {
-        printf("val[%d] = %d, %d \n",i, h_ptr[i], h_d_ptr[i]);
         if (h_ptr[i] != h_d_ptr[i])
         {
             bValid = false;

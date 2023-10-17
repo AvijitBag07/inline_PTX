@@ -50,8 +50,7 @@ void sequence_gpu(int *d_ptr, int length, const sycl::nd_item<3> &item_ct1)
     {
         unsigned int laneid;
         //This command gets the lane ID within the current warp
-        //laneid = item_ct1.get_sub_group().get_local_linear_id();
-        laneid = item_ct1.get_local_linear_id() % 32;
+        laneid = item_ct1.get_sub_group().get_local_linear_id();
         d_ptr[elemID] = laneid;
     }
 }
@@ -92,7 +91,7 @@ int main(int argc, char **argv)
 
     dpct::get_in_order_queue().parallel_for(
         sycl::nd_range<3>(cudaGridSize * cudaBlockSize, cudaBlockSize),
-        [=](sycl::nd_item<3> item_ct1) {
+        [=](sycl::nd_item<3> item_ct1) [[intel::reqd_sub_group_size(32)]] {
             sequence_gpu(d_ptr, N, item_ct1);
         });
 

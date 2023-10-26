@@ -4,7 +4,7 @@ These sample demonstrates the usage of inline PTX (assembly language) in SYCL ke
 
 | Area                   | Description
 |:---                    |:---
-| What you will learn    | How to migrate and map SYCL equivalent of PTX assembly
+| What you will learn    | How to migrate and map SYCL equivalent of PTX assembly in CUDA
 | Time to complete       | 15 minutes
 | Category               | Concepts and Functionality
 

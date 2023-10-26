@@ -1,20 +1,18 @@
-# `OceanFFT` Sample
+# `inlinePTX` Sample
 
-The `OceanFFT` sample simulates an Ocean heightfield using oneMKL FFT funtionality. It is implemented using SYCL by migrating code from original CUDA source code and offloading computations to a GPU or CPU.
+These sample demonstrates the usage of inline PTX (assembly language) in SYCL kernels.
 
 | Area                   | Description
 |:---                    |:---
-| What you will learn    | How to migrate and map SYCL oneMKL FFT equivalent of CUFFT API's
+| What you will learn    | How to migrate and map SYCL equivalent of PTX assembly
 | Time to complete       | 15 minutes
 | Category               | Concepts and Functionality
 
->**Note**: This sample is migrated from NVIDIA CUDA sample. See the [oceanFFT](https://github.com/NVIDIA/cuda-samples/tree/master/Samples/4_CUDA_Libraries/oceanFFT) sample in the NVIDIA/cuda-samples GitHub.
+>**Note**: This sample is migrated from NVIDIA CUDA sample. See the [inlinePTX](https://github.com/NVIDIA/cuda-samples/tree/master/Samples/2_Concepts_and_Techniques/inlinePTX) sample in the NVIDIA/cuda-samples GitHub.
 
 ## Purpose
 
-OceanFFT is a simulation of ocean waves/heightfield using FFT. FFT transforms the data from the time/space domain to frequency and vice versa. Ocean is made of many waves all added together. The main principle of Ocean rendering is that it can be modelled as sum of infinite waves at different amplitudes travelling in different directions. 
-
-The cuFFT library allows the floating-point power and parallelism of the GPU without having to develop a custom GPU-based FFT implementation. The equivalent lib on SYCL would be oneAPI Math Kernel Library where FFT function supports one, two, or three dimensions with mixed radices. The supported functions include complex-to-complex and real-to-complex transforms of arbitrary length in single-precision and double-precision. 
+inlinePTX is a simulation of PTX command (mov.u32) in kernels. The original CUDA* source code is migrated to SYCL for portability across GPUs from multiple vendors. 
 
 > **Note**: The sample used the open-source [SYCLomatic tool](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html) that assists developers in porting CUDA code to SYCL code. To finish the process, you must complete the rest of the coding manually and then tune to the desired level of performance for the target architecture. You can also use the [Intel® DPC++ Compatibility Tool](https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-compatibility-tool.html#gs.5g2aqn) available to augment Base Toolkit.
 
@@ -30,7 +28,7 @@ This sample contains two versions of the code in the following folders:
 | Optimized for         | Description
 |:---                   |:---
 | OS                    | Ubuntu* 20.04
-| Hardware              | Intel® Gen9 <br>Intel® Gen11 <br>Intel® Xeon CPU <br>Intel® Data Center GPU Max <br> Nvidia Testa P100 <br> Nvidia A100 <br> Nvidia H100 
+| Hardware              | Intel® Gen9 <br>Intel® Gen11 <br>Intel® Xeon CPU <br>Intel® Data Center GPU Max <br> Nvidia Testla P100 <br> Nvidia A100 <br> Nvidia H100 
 | Software              | SYCLomatic (Tag - 20230720) <br> Intel® oneAPI Base Toolkit (Base Kit) version 2023.2.1 <br> oneAPI for NVIDIA GPU plugin from Codeplay (to run SYCL™ applications on NVIDIA® GPUs)
 
 For information on how to use SYCLomatic, refer to the materials at *[Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html)*.<br> How to run SYCL™ applications on NVIDIA® GPUs, refer to 

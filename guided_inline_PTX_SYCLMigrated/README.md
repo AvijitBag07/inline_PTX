@@ -20,7 +20,7 @@ This sample contains two versions of the code in the following folders:
 
 | Folder Name          | Description
 |:---                  |:---
-|`01_dpct_output`      | Contains output of SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. This SYCL code has some unmigrated code that must be manually fixed to get full functionality. (The code does not functionally work as generated.)
+|`01_dpct_output`      | Contains output of SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. This SYCL code has some unmigrated code that must be manually fixed to get full functionality. (The code does not functionally work on CPU as generated.)
 |`02_sycl_migrated`    | Contains manually migrated SYCL code from CUDA code.
 
 ## Prerequisites
@@ -29,7 +29,7 @@ This sample contains two versions of the code in the following folders:
 |:---                   |:---
 | OS                    | Ubuntu* 20.04
 | Hardware              | Intel® Gen9 <br>Intel® Gen11 <br>Intel® Xeon CPU <br>Intel® Data Center GPU Max <br> Nvidia Testla P100 <br> Nvidia A100 <br> Nvidia H100 
-| Software              | SYCLomatic (Tag - 20230720) <br> Intel® oneAPI Base Toolkit (Base Kit) version 2023.2.1 <br> oneAPI for NVIDIA GPU plugin from Codeplay (to run SYCL™ applications on NVIDIA® GPUs)
+| Software              | SYCLomatic (Tag - 20231004) <br> Intel® oneAPI Base Toolkit (Base Kit) version 2023.2.1 <br> oneAPI for NVIDIA GPU plugin from Codeplay (to run SYCL™ applications on NVIDIA® GPUs)
 
 For information on how to use SYCLomatic, refer to the materials at *[Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html)*.<br> How to run SYCL™ applications on NVIDIA® GPUs, refer to 
 [oneAPI for NVIDIA GPUs](https://developer.codeplay.com/products/oneapi/nvidia/) plugin from Codeplay.
@@ -37,20 +37,14 @@ For information on how to use SYCLomatic, refer to the materials at *[Migrate fr
 
 ## Key Implementation Details
 This sample demonstrates the migration of the following prominent CUDA feature:
- - CUDA FFT API (CUFFT)
+ - PTX Assembly
 
-OceanFFT sample demonstrates how to use FFT API to synthesize and render an ocean surface in real-time. SYCL oceanFFT generates wave heightfield at time based on initial heightfield and dispersion relationship. Then FFT API is executed in inverse order to convert to spatial domain. Finally, height map values and slope values are evaluated and compared with reference values to determine whether it is correct or wrong.
+InlinePTX sample demonstrates how to implement PTX assembly (mov.u32) in SYCL kernels.
 
 >**Note**: Refer to [Workflow for a CUDA* to SYCL* Migration](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/cuda-sycl-migration-workflow.html) for general information about the migration workflow.
 ## CUDA source code evaluation
 
-The OceanFFT sample demonstrates the FFT Computations through different processes one after the another. 
-
-- Generate wave spectrum in frequency domain.
-- Execute inverse FFT to convert to spatial domain.
-- Update height map values based on output of FFT.
-- Calculate slope by partial differences in spatial domain.
-
+The inlinePTX application that demonstrates to embed PTX assembly (mov.u32) in a CUDA kernel.  
 
 > **Note**: For more information on how to use Syclomatic Tool, visit [Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html#gs.vmhplg).
 
@@ -67,9 +61,9 @@ For this sample, the SYCLomatic tool automatically migrates 100% of the CUDA cod
    ```
    git clone https://github.com/NVIDIA/cuda-samples.git
    ```
-2. Change to the concurrentKernels sample directory.
+2. Change to the inlinePTX sample directory.
    ```
-   cd cuda-samples/Samples/4_CUDA_Libraries/oceanFFT/
+   cd cuda-samples/Samples/2_Concepts_and_Techniques/inlinePTX/
    ```
 3. Generate a compilation database with intercept-build.
    ```
@@ -84,17 +78,24 @@ For this sample, the SYCLomatic tool automatically migrates 100% of the CUDA cod
 ## Manual Workarounds
 The following manual change has been done in order to complete the migration.
    
-1. Few CUDA headers are not migrated to SYCL which contain some macros which are used in code. It has been changed manually.
+1. The warp size in CUDA is a fixed constant 32, but in SYCL sub-group size usually can be 16 or 32. Use intel extension [[intel::reqd_sub_group_size(32)]] to restrict the sub-group size to 32.
       ```
-      CUDART_SQRT_HALF_F
+      dpct::get_in_order_queue().parallel_for(
+        sycl::nd_range<3>(cudaGridSize * cudaBlockSize, cudaBlockSize),
+        [=](sycl::nd_item<3> item_ct1) {
+            sequence_gpu(d_ptr, N, item_ct1);
+        });
       ```
       Manually defined as below
       ```
-      #define SYCLRT_SQRT_HALF_F 0.707106781f
+      dpct::get_in_order_queue().parallel_for(
+        sycl::nd_range<3>(cudaGridSize * cudaBlockSize, cudaBlockSize),
+        [=](sycl::nd_item<3> item_ct1) [[intel::reqd_sub_group_size(32)]] {
+            sequence_gpu(d_ptr, N, item_ct1);
+        });
       ```
-> **Note**: OceanFFT CUDA sample includes OpenGL feature as well, Since SYCL does not support OpenGL we do not migrate OpenGL  functions.
 
-## Build and Run the `oceanFFT` Sample
+## Build and Run the `inlinePTX` Sample
 
 > **Note**: If you have not already done so, set up your CLI
 > environment by sourcing  the `setvars` script in the root of your oneAPI installation.
@@ -113,12 +114,7 @@ The following manual change has been done in order to complete the migration.
 ### On Linux*
 
 1. Change to the sample directory.
-2. For Nvidia GPUs, install the opensource oneMKL lib and set the environment variables before build.  
-   ```
-   export ONEMKL_INSTALL_DIR=path_to_opensource_oneMKL_build_dir
-   export LD_LIBRARY_PATH=$ONEMKL_INSTALL_DIR/lib:$LD_LIBRARY_PATH
-   ```
-3. Build the program.
+2. Build the program.
    ```
    $ mkdir build
    $ cd build
@@ -130,9 +126,17 @@ The following manual change has been done in order to complete the migration.
    > - Enable **INTEL_MAX_GPU** flag during build which supports Intel® Data Center GPU Max 1550 or 1100 to get optimized performance.
    > - Enable **NVIDIA_GPU** flag during build which supports NVIDIA GPUs.([oneAPI for NVIDIA GPUs](https://developer.codeplay.com/products/oneapi/nvidia/) plugin   from Codeplay is required to build for NVIDIA GPUs )
 
- 
-   By default, this command sequence will build the  `02_sycl_migrated` version of the program.
-
+ By default, this command sequence will build the `01_dpct_output` and `02_sycl_migrated` version of the program.
+3. Run `01_dpct_output` on GPU.
+   ```
+   make run
+   ```
+   Run `01_dpct_output` on CPU.
+   ```
+   export ONEAPI_DEVICE_SELECTOR=opencl:cpu
+   make run
+   unset ONEAPI_DEVICE_SELECTOR
+   ```
 4. Run `02_sycl_migrated` on GPU.
    ```
    make run_sm
@@ -158,19 +162,11 @@ If you receive an error message, troubleshoot the problem using the **Diagnostic
 
 The following example is for `02_sycl_migrated` for GPU on **Intel(R) UHD Graphics [0x9a60]**.
 ```
-./a.out qatest
-Compute capability 1.3
-sdkDumpBin: <spatialDomain.bin>
-> compareBin2Bin <float> nelements=65536, epsilon=0.10, threshold=0.15
-   src_file <spatialDomain.bin>, size=262144 bytes
-   ref_file <./data/ref_spatialDomain.bin>, size=262144 bytes
-  OK
-sdkDumpBin: <slopeShading.bin>
-> compareBin2Bin <float> nelements=131072, epsilon=0.10, threshold=0.15
-   src_file <slopeShading.bin>, size=524288 bytes
-   ref_file <./data/ref_slopeShading.bin>, size=524288 bytes
-  OK
-Processing time : 92.435997 (ms)
+make run_sm
+SYCL inline PTX assembler sample
+Test Successful.
+Built target run_sm
+
 ```
 
 ## License

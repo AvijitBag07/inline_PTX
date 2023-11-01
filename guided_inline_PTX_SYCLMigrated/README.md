@@ -126,18 +126,21 @@ The following manual change has been done in order to complete the migration.
    > - Enable **INTEL_MAX_GPU** flag during build which supports Intel® Data Center GPU Max 1550 or 1100 to get optimized performance.
    > - Enable **NVIDIA_GPU** flag during build which supports NVIDIA GPUs.([oneAPI for NVIDIA GPUs](https://developer.codeplay.com/products/oneapi/nvidia/) plugin   from Codeplay is required to build for NVIDIA GPUs )
 
- By default, this command sequence will build the `01_dpct_output` and `02_sycl_migrated` version of the program.
+   By default, this command sequence will build the `01_dpct_output` and `02_sycl_migrated` version of the program.
+  
 3. Run `01_dpct_output` on GPU.
    ```
    make run
    ```
    Run `01_dpct_output` on CPU.
+   
    ```
    export ONEAPI_DEVICE_SELECTOR=opencl:cpu
    make run
    unset ONEAPI_DEVICE_SELECTOR
    ```
-4. Run `02_sycl_migrated` on GPU.
+5. Run `02_sycl_migrated` on GPU.
+   
    ```
    make run_sm
    ```

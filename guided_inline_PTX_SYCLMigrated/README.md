@@ -20,7 +20,7 @@ This sample contains two versions of the code in the following folders:
 
 | Folder Name          | Description
 |:---                  |:---
-|`01_dpct_output`      | Contains the output of SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. The tool completely migrates code but needs manual changes to get functional correctness on CPU as generated.
+|`01_dpct_output`      | Contains the output of the SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. The tool completely migrates code but needs manual changes to get functional correctness on CPU as generated.
 |`02_sycl_migrated`    | Contains manually migrated SYCL code from CUDA code.
 
 ## Prerequisites
@@ -36,7 +36,7 @@ For information on how to use SYCLomatic, refer to the materials at *[Migrate fr
 
 
 ## Key Implementation Details
-This sample demonstrates the migration of the following prominent CUDA feature:
+This sample demonstrates the migration of the following prominent CUDA features:
  - PTX Assembly
 
 InlinePTX sample demonstrates how to implement PTX assembly (mov.u32) in SYCL kernels.
@@ -44,9 +44,9 @@ InlinePTX sample demonstrates how to implement PTX assembly (mov.u32) in SYCL ke
 >**Note**: Refer to [Workflow for a CUDA* to SYCL* Migration](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/cuda-sycl-migration-workflow.html) for general information about the migration workflow.
 ## CUDA source code evaluation
 
-The inlinePTX application demonstrates to embed PTX assembly (mov.u32) in a CUDA kernel.  
+The inlinePTX application demonstrates the ability to embed PTX assembly (mov.u32) in a CUDA kernel.  
 
-> **Note**: For more information on how to use Syclomatic Tool, visit [Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html#gs.vmhplg).
+> **Note**: For more information on how to use the Syclomatic Tool, visit [Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html#gs.vmhplg).
 
 ## Set Environment Variables
 
@@ -126,7 +126,7 @@ The following manual change has been done in order to complete the migration.
    > - Enable **INTEL_MAX_GPU** flag during build which supports Intel® Data Center GPU Max 1550 or 1100 to get optimized performance.
    > - Enable **NVIDIA_GPU** flag during build which supports NVIDIA GPUs.([oneAPI for NVIDIA GPUs](https://developer.codeplay.com/products/oneapi/nvidia/) plugin   from Codeplay is required to build for NVIDIA GPUs )
 
-   By default, this command sequence will build the `01_dpct_output` and `02_sycl_migrated` version of the program.
+   By default, this command sequence will build the `01_dpct_output` and `02_sycl_migrated` versions of the program.
   
 3. Run `01_dpct_output` on GPU.
    ```
@@ -139,7 +139,7 @@ The following manual change has been done in order to complete the migration.
    make run
    unset ONEAPI_DEVICE_SELECTOR
    ```
-5. Run `02_sycl_migrated` on GPU.
+4. Run `02_sycl_migrated` on GPU.
    
    ```
    make run_sm

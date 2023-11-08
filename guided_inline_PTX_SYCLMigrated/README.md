@@ -1,6 +1,6 @@
 # `inlinePTX` Sample
 
-These sample demonstrates the usage of inline PTX (assembly language) in SYCL kernels.
+This sample demonstrates the usage of inline PTX (assembly language) in SYCL kernels. The original CUDA* source code is migrated to SYCL for portability across GPUs from multiple vendors. 
 
 | Area                   | Description
 |:---                    |:---
@@ -8,11 +8,11 @@ These sample demonstrates the usage of inline PTX (assembly language) in SYCL ke
 | Time to complete       | 15 minutes
 | Category               | Concepts and Functionality
 
->**Note**: This sample is migrated from NVIDIA CUDA sample. See the [inlinePTX](https://github.com/NVIDIA/cuda-samples/tree/master/Samples/2_Concepts_and_Techniques/inlinePTX) sample in the NVIDIA/cuda-samples GitHub.
+>**Note**: This sample is migrated from the NVIDIA CUDA sample. See the [inlinePTX](https://github.com/NVIDIA/cuda-samples/tree/master/Samples/2_Concepts_and_Techniques/inlinePTX) sample in the NVIDIA/cuda-samples GitHub.
 
 ## Purpose
 
-inlinePTX is a simulation of PTX command (mov.u32) in kernels. The original CUDA* source code is migrated to SYCL for portability across GPUs from multiple vendors. 
+inlinePTX is a simulation of the PTX command (mov.u32) in kernels.
 
 > **Note**: The sample used the open-source [SYCLomatic tool](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html) that assists developers in porting CUDA code to SYCL code. To finish the process, you must complete the rest of the coding manually and then tune to the desired level of performance for the target architecture. You can also use the [Intel® DPC++ Compatibility Tool](https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-compatibility-tool.html#gs.5g2aqn) available to augment Base Toolkit.
 
@@ -20,7 +20,7 @@ This sample contains two versions of the code in the following folders:
 
 | Folder Name          | Description
 |:---                  |:---
-|`01_dpct_output`      | Contains output of SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. This SYCL code has some unmigrated code that must be manually fixed to get full functionality. (The code does not functionally work on CPU as generated.)
+|`01_dpct_output`      | Contains the output of SYCLomatic Tool used to migrate SYCL-compliant code from CUDA code. The tool completely migrates code but needs manual changes to get functional correctness on CPU as generated.
 |`02_sycl_migrated`    | Contains manually migrated SYCL code from CUDA code.
 
 ## Prerequisites
@@ -44,7 +44,7 @@ InlinePTX sample demonstrates how to implement PTX assembly (mov.u32) in SYCL ke
 >**Note**: Refer to [Workflow for a CUDA* to SYCL* Migration](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/cuda-sycl-migration-workflow.html) for general information about the migration workflow.
 ## CUDA source code evaluation
 
-The inlinePTX application that demonstrates to embed PTX assembly (mov.u32) in a CUDA kernel.  
+The inlinePTX application demonstrates to embed PTX assembly (mov.u32) in a CUDA kernel.  
 
 > **Note**: For more information on how to use Syclomatic Tool, visit [Migrate from CUDA* to C++ with SYCL*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/training/migrate-from-cuda-to-cpp-with-sycl.html#gs.vmhplg).
 

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     const int N = 1000;
 
-    int dev = 0;//findCudaDevice(argc, (const char **) argv);
+    int dev = 0;
  
     if (dev == -1)
     {
@@ -78,12 +78,12 @@ int main(int argc, char **argv)
     }
 
     int *d_ptr;
-    checkCudaErrors(DPCT_CHECK_ERROR(
-        d_ptr = sycl::malloc_device<int>(N, dpct::get_in_order_queue())));
+    DPCT_CHECK_ERROR(
+        d_ptr = sycl::malloc_device<int>(N, dpct::get_in_order_queue()));
 
     int *h_ptr;
-    checkCudaErrors(DPCT_CHECK_ERROR(
-        h_ptr = sycl::malloc_host<int>(N, dpct::get_in_order_queue())));
+    DPCT_CHECK_ERROR(
+        h_ptr = sycl::malloc_host<int>(N, dpct::get_in_order_queue()));
 
     sycl::range<3> cudaBlockSize(1, 1, 256);
     sycl::range<3> cudaGridSize(1, 1,
@@ -95,18 +95,17 @@ int main(int argc, char **argv)
             sequence_gpu(d_ptr, N, item_ct1);
         });
 
-    checkCudaErrors(
-        DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw()));
+    DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw());
 
     sequence_cpu(h_ptr, N);
 
     int *h_d_ptr;
-    checkCudaErrors(DPCT_CHECK_ERROR(
-        h_d_ptr = sycl::malloc_host<int>(N, dpct::get_in_order_queue())));
-    checkCudaErrors(
-        DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+    DPCT_CHECK_ERROR(
+        h_d_ptr = sycl::malloc_host<int>(N, dpct::get_in_order_queue()));
+    
+    DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                              .memcpy(h_d_ptr, d_ptr, N * sizeof(int))
-                             .wait()));
+                             .wait());
 
     bool bValid = true;
 
@@ -120,12 +119,10 @@ int main(int argc, char **argv)
 
     printf("Test %s.\n", bValid ? "Successful" : "Failed");
 
-    checkCudaErrors(
-        DPCT_CHECK_ERROR(sycl::free(d_ptr, dpct::get_in_order_queue())));
-    checkCudaErrors(
-        DPCT_CHECK_ERROR(sycl::free(h_ptr, dpct::get_in_order_queue())));
-    checkCudaErrors(
-        DPCT_CHECK_ERROR(sycl::free(h_d_ptr, dpct::get_in_order_queue())));
+    
+    DPCT_CHECK_ERROR(sycl::free(d_ptr, dpct::get_in_order_queue()));
+    DPCT_CHECK_ERROR(sycl::free(h_ptr, dpct::get_in_order_queue()));
+    DPCT_CHECK_ERROR(sycl::free(h_d_ptr, dpct::get_in_order_queue()));
 
     return bValid ? EXIT_SUCCESS: EXIT_FAILURE;
 }
